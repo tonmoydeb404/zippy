@@ -1,9 +1,11 @@
 #include <Arduino.h>
 #include "BluetoothControl.h"
 #include "MotorControl.h"
+#include "Ultrasonic.h"
 
 // Global Variables
 int incoming;
+int distance = 0;
 
 // ----------------------------------------------------------------------
 
@@ -16,6 +18,7 @@ void handleBluetooth()
 
     if (incoming != BluetoothControl::IDLE)
     {
+      distance = Ultrasonic::ping();
       Serial.print("Incoming: ");
       Serial.println(incoming);
     }
@@ -30,7 +33,15 @@ void handleBluetooth()
       MotorControl::disconnect();
       break;
     case BluetoothControl::FORWARD:
-      MotorControl::moveForward();
+      if (distance <= 30)
+      {
+        MotorControl::idle();
+      }
+      else
+      {
+        MotorControl::moveForward();
+      }
+
       break;
     case BluetoothControl::BACKWARD:
       MotorControl::moveBackward();
@@ -67,8 +78,9 @@ void setup()
   Serial.begin(115200); // Start Serial monitor
   Serial.println();
 
-  BluetoothControl::initialize();
   MotorControl::initialize();
+  Ultrasonic::initialize();
+  BluetoothControl::initialize();
 }
 
 void loop()

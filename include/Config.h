@@ -23,6 +23,7 @@
 
 #define TRIG_PIN 19
 #define ECHO_PIN 18
+#define MAX_DISTANCE 200
 
 // IR Sensor
 
