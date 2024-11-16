@@ -2,6 +2,7 @@
 #include "BluetoothControl.h"
 #include "MotorControl.h"
 #include "Ultrasonic.h"
+#include "EdgeControl.h"
 
 // Global Variables
 int incoming;
@@ -36,6 +37,28 @@ void handleBluetooth()
       if (distance <= 30)
       {
         MotorControl::idle();
+      }
+      else if (EdgeControl::isEdgeDetectedLeft())
+      {
+        MotorControl::idle();
+        MotorControl::moveBackward();
+        delay(300);
+        MotorControl::turnRight();
+        delay(500);
+      }
+      else if (EdgeControl::isEdgeDetectedRight())
+      {
+        MotorControl::idle();
+        MotorControl::moveBackward();
+        delay(300);
+        MotorControl::turnLeft();
+        delay(500);
+      }
+      else if (EdgeControl::isEdgeDetectedLeft() && EdgeControl::isEdgeDetectedRight())
+      {
+        MotorControl::idle();
+        MotorControl::moveBackward();
+        delay(500);
       }
       else
       {
@@ -80,6 +103,7 @@ void setup()
 
   MotorControl::initialize();
   Ultrasonic::initialize();
+  EdgeControl::initialize();
   BluetoothControl::initialize();
 }
 
